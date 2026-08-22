@@ -2,11 +2,6 @@ Public Sub HightlightDups(co1 As Range, co2 As Range)
 
 co1.FormatConditions.Delete
 
-'Dim MyRange As Range
-'Set MyRange = Range("$col:$col")
-
-'Applying the conditional formating
-
 co1.FormatConditions.Add _
 Type:=xlExpression, _
 Formula1:="=COUNTIF(" & co2.Address & "," & _
@@ -21,15 +16,13 @@ End Sub
 
 
 Sub insertationAndElimination()
-
-
+	
 Dim ws As Worksheet
 
 
+	
+'OMsert worksheet name here
 Set ws = ThisWorkbook.Sheets("data")
-
-
-
 
 
 
@@ -107,7 +100,6 @@ For i = 1 To UBound(Data, 1)
     sourceAddress = Trim(Split(result(10), ":")(1))
     
 
-    
     targetRow = i + 1
 
 With ws
@@ -138,36 +130,24 @@ Next i
     
     'Trimming Usernames
 For Each Cell2 In Range("G2:G" & lastRowOfData)
-    
     If Cell2.Value <> "" Then
-    
         Cell2.Value = LCase(Trim(Application.WorksheetFunction.Clean(Replace(Cell2.Value, Chr(160), ""))))
-    
     End If
-
 Next Cell2
 
 
 'Trimming Share Names
 For Each Cell5 In Range("I2:I" & lastRowOfData)
-    
     If Cell5.Value <> "" Then
-    
         Cell5.Value = Trim(Application.WorksheetFunction.Clean(Replace(Cell5.Value, Chr(160), "")))
-    
     End If
-
 Next Cell5
 
 'Trimming Share Path Names
 For Each Cell4 In Range("K2:K" & lastRowOfData)
-    
     If Cell4.Value <> "" Then
-    
         Cell4.Value = Trim(Application.WorksheetFunction.Clean(Replace(Cell4.Value, Chr(160), "")))
-    
     End If
-
 Next Cell4
     
     
@@ -200,7 +180,6 @@ HightlightDups Range("G2:G" & lastRowOfData), Range("N2:N" & lastRowOfE3)
 HightlightDups Range("N2:N" & lastRowOfE3), Range("G2:G" & lastRowOfData)
 
 'Hightlighting all the events that are not from the Public Folder (Red) and all the share path names that are files (Green)
-
 Dim NonPubicSelect As Range
 Dim NonFolders As Range
 
@@ -295,7 +274,6 @@ Dim pt As PivotTable
 Dim PC As PivotCache
 Dim table As Worksheet
 Dim dataSheet As Worksheet
-'Dim LastRow As Long
 Dim LastCol As Long
 Dim MyRange As Range
 
@@ -317,7 +295,6 @@ Set PC = ActiveWorkbook.PivotCaches.Create(xlDatabase, SourceData:=MyRange)
 Set pt = PC.CreatePivotTable(TableDestination:=table.Cells(1, 1), TableName:="detailed pivotTable")
 
 'Add Pivot Fields
-
 With pt
 
 'Coloumn area
@@ -355,10 +332,6 @@ summarized_LastCol = summarized_dataSheet.Cells(1, summarized_dataSheet.Columns.
 
 Set summarized_MyRange = summarized_dataSheet.Cells(1, 1).Resize(summarized_LastRow, summarized_LastCol)
 
-'Worksheets.Add After:=Worksheets("F3 only")
-
-'ActiveSheet.Name = "summarized pivotTable"
-
 Set summarized_table = Worksheets("F3 only")
 
 Set summarized_PC = ActiveWorkbook.PivotCaches.Create(xlDatabase, SourceData:=MyRange)
@@ -366,18 +339,12 @@ Set summarized_PC = ActiveWorkbook.PivotCaches.Create(xlDatabase, SourceData:=My
 Set summarized_pt = summarized_PC.CreatePivotTable(TableDestination:=summarized_table.Cells(2, summarized_LastCol + 3), TableName:="summarizedPivotTable")
 
 'Add Pivot Fields
-
 With summarized_pt
-
-'Coloumn area
-'.PivotFields("user name").Orientation = xlColumnField
 
 'Row area
 .PivotFields("Share Path Name").Orientation = xlRowField
-'.PivotFields("Share Name").Orientation = xlRowField
 
 .PivotFields("Share Path Name").Position = 1
-'.PivotFields("Share Name").Position = 2
 
 'Values area
 .AddDataField .PivotFields("Date and Time"), _
