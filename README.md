@@ -1,6 +1,6 @@
-# File Share Audit Analytics
+File Share Audit Analytics
 
-## Overview
+Overview
 
 Developed an end-to-end **file share audit analytics solution** using **VBA, Excel, Power BI, and Windows Security Event Logs (Event ID 5145)** to automate the identification, filtering, analysis, and reporting of public network share access across an enterprise healthcare environment.
 
@@ -8,9 +8,9 @@ The solution processes raw Windows Security Audit logs, extracts key access meta
 
 ---
 
-## Key Features
+Key Features
 
-###🔍 Automated Event Parsing
+🔍 Automated Event Parsing
 
 * Parsed raw **Windows Security Audit Event ID 5145** logs.
 * Extracted key access metadata, including:
@@ -24,7 +24,7 @@ The solution processes raw Windows Security Audit logs, extracts key access meta
   * Relative Target Name
   * Source Address
 
-###🧼 Data Scrubbing & Normalization
+🧼 Data Scrubbing & Normalization
 
 * Standardized usernames through:
 
@@ -34,7 +34,7 @@ The solution processes raw Windows Security Audit logs, extracts key access meta
 * Removed invalid and incomplete records.
 * Normalized share and folder names.
 
-###🏷️ Access Classification
+🏷️ Access Classification
 
 Implemented automated filtering rules to identify:
 
@@ -52,9 +52,9 @@ Excluded:
 
 ---
 
-##📊 Reporting & Analytics
+📊 Reporting & Analytics
 
-###📋 Excel Reporting
+📋 Excel Reporting
 
 Generated automated Excel reports containing:
 
@@ -63,7 +63,7 @@ Generated automated Excel reports containing:
 * Automated PivotTables
 * Filtered and cleaned audit data
 
-###🖥️  Power BI Dashboard
+🖥️  Power BI Dashboard
 
 Developed an interactive analytics dashboard featuring:
 
@@ -94,7 +94,7 @@ Developed an interactive analytics dashboard featuring:
 
 ---
 
-## Data Processing Workflow
+Data Processing Workflow
 
 ```text
 Windows Security Event Logs
@@ -125,7 +125,7 @@ Interactive Analytics Monthly Dashboard with Power BI
 
 ```
 
-## Impact
+Impact
 
 * Automated analysis of **150,000+ Windows security audit events**.
 * Reduced manual audit effort through automated parsing, filtering, and classification.
@@ -135,7 +135,7 @@ Interactive Analytics Monthly Dashboard with Power BI
 
 ---
 
-## Skills Demonstrated
+Skills Demonstrated
 
 * **Data Analysis**
 * **ETL & Data Transformation**
