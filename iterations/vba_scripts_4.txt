@@ -1,0 +1,233 @@
+Public Function getSecurityID(rowNum As Long)
+
+Dim result() As String
+Dim findUsername() As String
+
+result = Split(Cells(rowNum, 6).Value, vbLf)
+
+FindSecurityID = Split(result(3), ":")
+
+'MsgBox FindSecurityID(1)
+
+getSecurityID = Trim(FindSecurityID(1))
+
+End Function
+
+
+
+Public Function getAccountName(rowNum As Long)
+
+Dim result() As String
+Dim findAccountName() As String
+
+result = Split(Cells(rowNum, 6).Value, vbLf)
+
+'MsgBox result(4)
+
+
+findAccountName = Split(result(4), ":")
+
+'MsgBox findAccountName(1)
+
+getAccountName = Trim(findAccountName(1))
+
+End Function
+
+
+
+Public Function getAccountDomain(rowNum As Long)
+
+Dim result() As String
+Dim findAccountDomain() As String
+
+result = Split(Cells(rowNum, 6).Value, vbLf)
+
+'MsgBox result(4)
+
+
+findAccountDomain = Split(result(5), ":")
+
+'MsgBox findAccountDomain(1)
+
+getAccountDomain = Trim(findAccountDomain(1))
+
+End Function
+Public Function getShareName(rowNum As Long)
+
+Dim result() As String
+Dim findShareName() As String
+
+result = Split(Cells(rowNum, 6).Value, vbLf)
+
+'MsgBox result(4)
+
+
+findShareName = Split(result(14), ":")
+
+'MsgBox findShareName(1)
+
+getShareName = Trim(findShareName(1))
+
+End Function
+
+Public Function getSharePath(rowNum As Long)
+
+Dim result() As String
+Dim findSharePath As String
+Dim colonPos As Long
+Dim result2 As String
+
+result = Split(Cells(rowNum, 6).Value, vbLf)
+
+'MsgBox result(4)
+
+
+colonPos = InStr(result(15), ":")
+
+result2 = Mid(result(15), colonPos + 1)
+
+'MsgBox findShareName(1)
+
+getSharePath = Trim(result2)
+
+End Function
+
+Public Function getSharePathName(rowNum As Long)
+
+Dim result() As String
+Dim sharePathName As String
+Dim trimmed_findRelativeTargetName() As String
+
+
+result = Split(Cells(rowNum, 6).Value, vbLf)
+findRelativeTargetName = Split(result(16), ":")
+trimmed_findRelativeTargetName = Split(findRelativeTargetName(1), "\")
+
+getSharePathName = Trim(trimmed_findRelativeTargetName(0))
+
+End Function
+
+Public Function getRelativeTargetName(rowNum As Long)
+
+Dim result() As String
+Dim findRelativeTargetName() As String
+
+result = Split(Cells(rowNum, 6).Value, vbLf)
+
+'MsgBox result(4)
+
+
+findRelativeTargetName = Split(result(16), ":")
+
+'MsgBox findRelativeTargetName(1)
+
+getRelativeTargetName = Trim(findRelativeTargetName(1))
+
+End Function
+
+Public Function getSourceAddress(rowNum As Long)
+
+Dim result() As String
+Dim findSourceAddress() As String
+
+result = Split(Cells(rowNum, 6).Value, vbLf)
+
+'MsgBox result(4)
+
+
+findSourceAddress = Split(result(10), ":")
+
+'MsgBox findSourceAddress(1)
+
+getSourceAddress = Trim(findSourceAddress(1))
+
+End Function
+
+
+Sub test()
+
+Dim result As String
+
+result = getSharePathName(14)
+
+MsgBox result
+
+End Sub
+
+
+Sub insertingValues()
+
+Dim ws As Worksheet
+Dim Cell As Range
+Dim targetRow As Long
+Dim sID As String
+
+Set ws = ThisWorkbook.Sheets("data2")
+
+For Each Cell In Selection
+
+    securityID = getSecurityID(Cell.Row)
+    accountName = getAccountName(Cell.Row)
+    accountDomain = getAccountDomain(Cell.Row)
+    shareName = getShareName(Cell.Row)
+    relativeTargetName = getRelativeTargetName(Cell.Row)
+    sourceAddress = getSourceAddress(Cell.Row)
+    sharePath = getSharePath(Cell.Row)
+    sharePathName = getSharePathName(Cell.Row)
+    
+    targetRow = Cell.Row
+    
+    ws.Cells(targetRow, 9).Value = securityID
+    ws.Cells(targetRow, 10).Value = accountName
+    ws.Cells(targetRow, 11).Value = accountDomain
+    ws.Cells(targetRow, 12).Value = shareName
+    ws.Cells(targetRow, 13).Value = sharePath
+    ws.Cells(targetRow, 14).Value = sharePathName
+    ws.Cells(targetRow, 15).Value = relativeTargetName
+    ws.Cells(targetRow, 16).Value = sourceAddress
+    
+Next Cell
+    
+    ws.Cells(1, 9).Value = "Security ID"
+    ws.Cells(1, 10).Value = "User Name"
+    ws.Cells(1, 11).Value = "Account Domain"
+    ws.Cells(1, 12).Value = "Share Name"
+    ws.Cells(1, 13).Value = "Share Path"
+    ws.Cells(1, 14).Value = "Share Path Name"
+    ws.Cells(1, 15).Value = "Relative Target Name"
+    ws.Cells(1, 16).Value = "Source Address"
+    
+    Columns("F:H").Delete Shift:=xlToLeft
+    
+    
+End Sub
+
+
+
+
+
+Sub importE3users()
+
+Dim FilePath As String
+
+FilePath = "C:\Users\snarendr\Documents\e3Users.txt"
+
+Cells(1, 14).Value = "E3 Users"
+
+With ActiveSheet.QueryTables.Add( _
+    Connection:="TEXT;" & FilePath, _
+    Destination:=Range("N2"))
+    
+    .TextFileParseType = xlDelimited
+    .TextFileCommaDelimiter = True
+    .Refresh
+    
+End With
+
+End Sub
+
+
+
+
+
+

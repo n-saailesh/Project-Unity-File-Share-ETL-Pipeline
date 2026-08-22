@@ -1,0 +1,54 @@
+Sub insertationAndElimination()
+
+Dim ws As Worksheet
+Dim Cell As Range
+Dim targetRow As Long
+Dim sID As String
+Dim Cell2 As Range
+
+Set ws = ThisWorkbook.Sheets("data")
+
+For Each Cell In Selection
+
+    securityID = getSecurityID(Cell.Row)
+    accountName = getAccountName(Cell.Row)
+    accountDomain = getAccountDomain(Cell.Row)
+    shareName = getShareName(Cell.Row)
+    relativeTargetName = getRelativeTargetName(Cell.Row)
+    sourceAddress = getSourceAddress(Cell.Row)
+    sharePath = getSharePath(Cell.Row)
+    sharePathName = getSharePathName(Cell.Row)
+    
+    targetRow = Cell.Row
+    
+    ws.Cells(targetRow, 9).Value = securityID
+    ws.Cells(targetRow, 10).Value = accountName
+    ws.Cells(targetRow, 11).Value = accountDomain
+    ws.Cells(targetRow, 12).Value = shareName
+    ws.Cells(targetRow, 13).Value = sharePath
+    ws.Cells(targetRow, 14).Value = sharePathName
+    ws.Cells(targetRow, 15).Value = relativeTargetName
+    ws.Cells(targetRow, 16).Value = sourceAddress
+    
+Next Cell
+    
+    ws.Cells(1, 9).Value = "Security ID"
+    ws.Cells(1, 10).Value = "User Name"
+    ws.Cells(1, 11).Value = "Account Domain"
+    ws.Cells(1, 12).Value = "Share Name"
+    ws.Cells(1, 13).Value = "Share Path"
+    ws.Cells(1, 14).Value = "Share Path Name"
+    ws.Cells(1, 15).Value = "Relative Target Name"
+    ws.Cells(1, 16).Value = "Source Address"
+    
+    Columns("F:H").Delete Shift:=xlToLeft
+    
+    For Each Cell2 In Range("G:G")
+    
+    If Cell2.Value <> "" Then
+    
+    Cell2.Value = LCase(Application.WorksheetFunction.Trim(Application.WorksheetFunction.Clean(Replace(Cell2.Value, Chr(160), ""))))
+    
+    End If
+
+Next Cell2

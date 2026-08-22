@@ -1,0 +1,139 @@
+Sub getValue()
+MsgBox Range("F2").Value
+End Sub
+
+
+Sub getSplitValue()
+Dim result() As String
+result = Split(Range("F3").Value, vbLf)
+MsgBox result(12)
+End Sub
+
+
+Sub AddFilenametoColumn()
+
+
+Dim result() As String
+Dim ws As Worksheet
+Dim targetRow As Long
+Dim lastCol As Long
+Dim nextCol As Long
+Dim valueToFilename As Variant
+Dim Cell As Range
+
+Set ws = ThisWorkbook.Sheets("v6")
+
+For Each Cell In Selection
+
+    result = Split(Cell.Value, vbLf)
+    
+    targetRow = Cell.Row
+    
+    If InStr(1, result(0), "handle scavenged", vbTextCompare) > 0 Then
+        valueToFilename = result(3)
+    
+    Else
+        valueToFilename = result(7)
+    
+    End If
+    
+    
+    nextCol = ws.Cells(targetRow, ws.Columns.Count).End(xlToLeft).Column + 1
+    
+    ws.Cells(targetRow, 7).Value = valueToFilename
+    
+    Next Cell
+
+End Sub
+
+
+
+Sub AddFilenametoGuidance()
+
+
+Dim result() As String
+Dim ws As Worksheet
+Dim targetRow As Long
+Dim lastCol As Long
+Dim nextCol As Long
+Dim colNum As Integer
+Dim valueToGuidance As Variant
+Dim Cell As Range
+
+Set ws = ThisWorkbook.Sheets("v6")
+
+For Each Cell In Selection
+
+    result = Split(Cell.Value, vbLf)
+    
+    targetRow = Cell.Row
+    
+    '''If InStr(1, result(0), "handle scavenged", vbTextCompare) > 0 Then
+        ''' valueToGuidance = result(12)
+    
+    '''Else
+        '''valueToGuidance = result(18)
+    
+    '''End If
+    
+    valueToGuidance = result(UBound(result))
+    
+    nextCol = ws.Cells(targetRow, ws.Columns.Count).End(xlToLeft).Column + 1
+    
+    ws.Cells(targetRow, 8).Value = valueToGuidance
+    
+    Next Cell
+End Sub
+
+
+Sub FilenameSlicer()
+
+Dim name As String
+Dim result() As String
+Dim Cell As Range
+
+For Each Cell In Selection
+    result = Split(Cell.Value, vbLf)
+
+    name = Replace(result(0), "File Name: ", "")
+
+    Cell.Value = name
+
+Next Cell
+
+
+End Sub
+
+
+Sub GetParentFolder()
+
+Dim filename As String
+Dim filenameSplitted() As String
+Dim targetRow As Long
+Dim lastCol As Long
+Dim nextCol As Long
+Dim colNum As Integer
+Dim Cell As Range
+
+Set ws = ThisWorkbook.Sheets("v6")
+
+For Each Cell In Selection
+    
+    filename = Cell.Value
+    filenameSplitted = Split(filename, "\")
+    
+    targetRow = Cell.Row
+    
+    '''nextCol = ws.Cells(targetRow, ws.Columns.Count).End(xlToLeft).Column + 1
+    ws.Cells(targetRow, 8).Value = filenameSplitted(0)
+    
+Next Cell
+
+End Sub
+
+
+
+
+
+
+

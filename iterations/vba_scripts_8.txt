@@ -1,0 +1,639 @@
+Public Function getSecurityID(rowNum As Long)
+
+Dim result() As String
+Dim findUsername() As String
+
+result = Split(Cells(rowNum, 6).Value, vbLf)
+
+FindSecurityID = Split(result(3), ":")
+
+'MsgBox FindSecurityID(1)
+
+getSecurityID = Trim(FindSecurityID(1))
+
+End Function
+
+
+
+Public Function getAccountName(rowNum As Long)
+
+Dim result() As String
+Dim findAccountName() As String
+
+result = Split(Cells(rowNum, 6).Value, vbLf)
+
+'MsgBox result(4)
+
+
+findAccountName = Split(result(4), ":")
+
+'MsgBox findAccountName(1)
+
+getAccountName = Trim(findAccountName(1))
+
+End Function
+
+
+
+Public Function getAccountDomain(rowNum As Long)
+
+Dim result() As String
+Dim findAccountDomain() As String
+
+result = Split(Cells(rowNum, 6).Value, vbLf)
+
+'MsgBox result(4)
+
+
+findAccountDomain = Split(result(5), ":")
+
+'MsgBox findAccountDomain(1)
+
+getAccountDomain = Trim(findAccountDomain(1))
+
+End Function
+Public Function getShareName(rowNum As Long)
+
+Dim result() As String
+Dim findShareName() As String
+
+result = Split(Cells(rowNum, 6).Value, vbLf)
+
+'MsgBox result(4)
+
+
+findShareName = Split(result(14), ":")
+
+'MsgBox findShareName(1)
+
+getShareName = Trim(findShareName(1))
+
+End Function
+
+Public Function getSharePath(rowNum As Long)
+
+Dim result() As String
+Dim findSharePath As String
+Dim colonPos As Long
+Dim result2 As String
+
+result = Split(Cells(rowNum, 6).Value, vbLf)
+
+'MsgBox result(4)
+
+
+colonPos = InStr(result(15), ":")
+
+result2 = Mid(result(15), colonPos + 1)
+
+'MsgBox findShareName(1)
+
+getSharePath = Trim(result2)
+
+End Function
+
+Public Function getSharePathName(rowNum As Long)
+
+Dim result() As String
+Dim sharePathName As String
+Dim trimmed_findRelativeTargetName() As String
+
+
+result = Split(Cells(rowNum, 6).Value, vbLf)
+findRelativeTargetName = Split(result(16), ":")
+trimmed_findRelativeTargetName = Split(findRelativeTargetName(1), "\")
+
+getSharePathName = Trim(trimmed_findRelativeTargetName(0))
+
+End Function
+
+Public Function getRelativeTargetName(rowNum As Long)
+
+Dim result() As String
+Dim findRelativeTargetName() As String
+
+result = Split(Cells(rowNum, 6).Value, vbLf)
+
+'MsgBox result(4)
+
+
+findRelativeTargetName = Split(result(16), ":")
+
+'MsgBox findRelativeTargetName(1)
+
+getRelativeTargetName = Trim(findRelativeTargetName(1))
+
+End Function
+
+Public Function getSourceAddress(rowNum As Long)
+
+Dim result() As String
+Dim findSourceAddress() As String
+
+result = Split(Cells(rowNum, 6).Value, vbLf)
+
+'MsgBox result(4)
+
+
+findSourceAddress = Split(result(10), ":")
+
+'MsgBox findSourceAddress(1)
+
+getSourceAddress = Trim(findSourceAddress(1))
+
+End Function
+
+
+Sub test()
+
+Dim result As String
+
+result = getSharePathName(14)
+
+MsgBox result
+
+End Sub
+Sub insertingValues()
+
+Dim ws As Worksheet
+Dim Cell As Range
+Dim targetRow As Long
+Dim sID As String
+Dim Cell2 As Range
+
+Set ws = ThisWorkbook.Sheets("data")
+
+For Each Cell In Selection
+
+    securityID = getSecurityID(Cell.Row)
+    accountName = getAccountName(Cell.Row)
+    accountDomain = getAccountDomain(Cell.Row)
+    shareName = getShareName(Cell.Row)
+    relativeTargetName = getRelativeTargetName(Cell.Row)
+    sourceAddress = getSourceAddress(Cell.Row)
+    sharePath = getSharePath(Cell.Row)
+    sharePathName = getSharePathName(Cell.Row)
+    
+    targetRow = Cell.Row
+    
+    ws.Cells(targetRow, 9).Value = securityID
+    ws.Cells(targetRow, 10).Value = accountName
+    ws.Cells(targetRow, 11).Value = accountDomain
+    ws.Cells(targetRow, 12).Value = shareName
+    ws.Cells(targetRow, 13).Value = sharePath
+    ws.Cells(targetRow, 14).Value = sharePathName
+    ws.Cells(targetRow, 15).Value = relativeTargetName
+    ws.Cells(targetRow, 16).Value = sourceAddress
+    
+Next Cell
+    
+    ws.Cells(1, 9).Value = "Security ID"
+    ws.Cells(1, 10).Value = "User Name"
+    ws.Cells(1, 11).Value = "Account Domain"
+    ws.Cells(1, 12).Value = "Share Name"
+    ws.Cells(1, 13).Value = "Share Path"
+    ws.Cells(1, 14).Value = "Share Path Name"
+    ws.Cells(1, 15).Value = "Relative Target Name"
+    ws.Cells(1, 16).Value = "Source Address"
+    
+    Columns("F:H").Delete Shift:=xlToLeft
+    
+    For Each Cell2 In Range("G:G")
+    
+    If Cell2.Value <> "" Then
+    
+    Cell2.Value = LCase(Application.WorksheetFunction.Trim(Application.WorksheetFunction.Clean(Replace(Cell2.Value, Chr(160), ""))))
+    
+    End If
+
+Next Cell2
+
+End Sub
+Public Sub importE3users()
+
+Dim FilePath As String
+
+FilePath = "C:\Users\snarendr\Documents\e3Users.txt"
+
+Cells(1, 14).Value = "E3 Users"
+
+With ActiveSheet.QueryTables.Add( _
+    Connection:="TEXT;" & FilePath, _
+    Destination:=Range("N2"))
+    
+    .TextFileParseType = xlDelimited
+    .TextFileCommaDelimiter = True
+    .Refresh
+    
+End With
+
+End Sub
+
+Public Sub HightlightDups(co1 As Range, co2 As Range)
+
+'co1.FormatConditions.Delete
+
+'Dim MyRange As Range
+'Set MyRange = Range("$col:$col")
+
+'Applying the conditional formating
+
+co1.FormatConditions.Add _
+Type:=xlExpression, _
+Formula1:="=COUNTIF(" & co2.Address & "," & _
+co1.Cells(1, 1).Address(False, False) & ")>0"
+    
+    co1.FormatConditions(1).Interior.Color = RGB(255, 255, 0)
+    
+End Sub
+
+
+Sub Testing()
+
+HightlightDups Columns("G"), Columns("N")
+HightlightDups Columns("N"), Columns("G")
+
+End Sub
+
+Public Function DuplicateandCut()
+
+Dim Cell3 As Range
+
+ActiveSheet.Name = "F3 only"
+
+Dim wsNew As Worksheet
+
+ActiveSheet.Copy After:=ActiveSheet
+
+Set wsNew = ActiveSheet
+
+wsNew.Name = "E# and F3"
+
+Dim LastRow As Long
+Dim i As Long
+
+LastRow = Cells(Rows.Count, "G").End(xlUp).Row
+
+For i = LastRow To 2 Step -1
+
+'For Each Cell3 In Range("G2:G" & Cells(Rows.Count, "G").End(xlUp).Row)
+
+If Cells(i, "G").DisplayFormat.Interior.Color = RGB(255, 255, 0) Then
+    Range("A" & i & ":M" & i).Delete Shift:=xlUp
+End If
+
+Next i
+
+
+End Function
+
+
+
+Sub insertationAndElimination()
+
+Dim ws As Worksheet
+Dim Cell As Range
+Dim targetRow As Long
+Dim sID As String
+Dim Cell2 As Range
+Dim Cell5 As Range
+Dim Cell4 As Range
+
+Set ws = ThisWorkbook.Sheets("Sheet13")
+
+For Each Cell In Selection
+
+    securityID = getSecurityID(Cell.Row)
+    accountName = getAccountName(Cell.Row)
+    accountDomain = getAccountDomain(Cell.Row)
+    shareName = getShareName(Cell.Row)
+    relativeTargetName = getRelativeTargetName(Cell.Row)
+    sourceAddress = getSourceAddress(Cell.Row)
+    sharePath = getSharePath(Cell.Row)
+    sharePathName = getSharePathName(Cell.Row)
+    
+    targetRow = Cell.Row
+    
+    ws.Cells(targetRow, 9).Value = securityID
+    ws.Cells(targetRow, 10).Value = accountName
+    ws.Cells(targetRow, 11).Value = accountDomain
+    ws.Cells(targetRow, 12).Value = shareName
+    ws.Cells(targetRow, 13).Value = sharePath
+    ws.Cells(targetRow, 14).Value = sharePathName
+    ws.Cells(targetRow, 15).Value = relativeTargetName
+    ws.Cells(targetRow, 16).Value = sourceAddress
+    
+Next Cell
+    
+    ws.Cells(1, 9).Value = "Security ID"
+    ws.Cells(1, 10).Value = "User Name"
+    ws.Cells(1, 11).Value = "Account Domain"
+    ws.Cells(1, 12).Value = "Share Name"
+    ws.Cells(1, 13).Value = "Share Path"
+    ws.Cells(1, 14).Value = "Share Path Name"
+    ws.Cells(1, 15).Value = "Relative Target Name"
+    ws.Cells(1, 16).Value = "Source Address"
+    
+    Columns("F:H").Delete Shift:=xlToLeft
+    
+    'Trimming Usernames
+For Each Cell2 In Range("G:G")
+    
+    If Cell2.Value <> "" Then
+    
+        Cell2.Value = LCase(Application.WorksheetFunction.Trim(Application.WorksheetFunction.Clean(Replace(Cell2.Value, Chr(160), ""))))
+    
+    End If
+
+Next Cell2
+
+
+'Trimming Share Names
+For Each Cell5 In Range("I:I")
+    
+    If Cell5.Value <> "" Then
+    
+        Cell5.Value = Application.WorksheetFunction.Trim(Application.WorksheetFunction.Clean(Replace(Cell5.Value, Chr(160), "")))
+    
+    End If
+
+Next Cell5
+
+'Trimming Share Path Names
+For Each Cell4 In Range("K:K")
+    
+    If Cell4.Value <> "" Then
+    
+        Cell4.Value = Application.WorksheetFunction.Trim(Application.WorksheetFunction.Clean(Replace(Cell4.Value, Chr(160), "")))
+    
+    End If
+
+Next Cell4
+    
+    
+'Import E3_users.csv into ActiveSheet
+Dim FilePath As String
+
+FilePath = "C:\Users\snarendr\Documents\e3Users.txt"
+
+Cells(1, 14).Value = "E3 Users"
+
+With ActiveSheet.QueryTables.Add( _
+    Connection:="TEXT;" & FilePath, _
+    Destination:=Range("N2"))
+    
+    .TextFileParseType = xlDelimited
+    .TextFileCommaDelimiter = True
+    .Refresh
+    
+End With
+
+'Function to help find the E3 users within the events
+HightlightDups Columns("G"), Columns("N")
+HightlightDups Columns("N"), Columns("G")
+
+'Creates a duplicate ActiveSheet and eliminates E3 users
+Dim Cell3 As Range
+
+ActiveSheet.Name = "F3 only"
+
+Dim wsNew As Worksheet
+
+ActiveSheet.Copy After:=ActiveSheet
+
+Set wsNew = ActiveSheet
+
+wsNew.Name = "E3 and F3"
+
+Dim LastRow As Long
+Dim i As Long
+
+LastRow = Cells(Rows.Count, "G").End(xlUp).Row
+
+For i = LastRow To 2 Step -1
+
+
+If Cells(i, "G").DisplayFormat.Interior.Color = RGB(255, 255, 0) Then
+    Range("A" & i & ":M" & i).Delete Shift:=xlUp
+End If
+
+Next i
+
+
+'Delete E3 User Column
+Worksheets("F3 Only").Columns("N").ClearContents
+
+   
+'Creating Pivot Table for a seperate worksheet
+Dim pt As PivotTable
+Dim PC As PivotCache
+Dim table As Worksheet
+Dim dataSheet As Worksheet
+'Dim LastRow As Long
+Dim LastCol As Long
+Dim MyRange As Range
+
+
+Set dataSheet = Worksheets("F3 only")
+
+LastRow = dataSheet.Cells(dataSheet.Rows.Count, 1).End(xlUp).Row
+LastCol = dataSheet.Cells(1, dataSheet.Columns.Count).End(xlToLeft).Column
+
+Set MyRange = dataSheet.Cells(1, 1).Resize(LastRow, LastCol)
+
+Worksheets.Add After:=Worksheets("F3 only")
+
+ActiveSheet.Name = "detailed pivotTable"
+
+Set table = Worksheets("detailed pivotTable")
+
+Set PC = ActiveWorkbook.PivotCaches.Create(xlDatabase, SourceData:=MyRange)
+
+Set pt = PC.CreatePivotTable(TableDestination:=table.Cells(1, 1), TableName:="detailed pivotTable")
+
+'Add Pivot Fields
+
+With pt
+
+'Coloumn area
+.PivotFields("user name").Orientation = xlColumnField
+
+'Row area
+.PivotFields("Share Path Name").Orientation = xlRowField
+.PivotFields("Share Name").Orientation = xlRowField
+
+.PivotFields("Share Path Name").Position = 1
+.PivotFields("Share Name").Position = 2
+
+'Values area
+.AddDataField .PivotFields("Date and Time"), _
+"Count of Events", _
+xlCount
+
+End With
+
+
+'Creating Pivot Table for a F3 user worksheet
+Dim summarized_pt As PivotTable
+Dim summarized_PC As PivotCache
+Dim summarized_table As Worksheet
+Dim summarized_dataSheet As Worksheet
+Dim summarized_LastRow As Long
+Dim summarized_LastCol As Long
+Dim summarized_MyRange As Range
+
+
+Set summarized_dataSheet = Worksheets("F3 only")
+
+summarized_LastRow = summarized_dataSheet.Cells(summarized_dataSheet.Rows.Count, 1).End(xlUp).Row
+summarized_LastCol = summarized_dataSheet.Cells(1, summarized_dataSheet.Columns.Count).End(xlToLeft).Column
+
+Set summarized_MyRange = summarized_dataSheet.Cells(1, 1).Resize(summarized_LastRow, summarized_LastCol)
+
+'Worksheets.Add After:=Worksheets("F3 only")
+
+'ActiveSheet.Name = "summarized pivotTable"
+
+Set summarized_table = Worksheets("F3 only")
+
+Set summarized_PC = ActiveWorkbook.PivotCaches.Create(xlDatabase, SourceData:=MyRange)
+
+Set summarized_pt = summarized_PC.CreatePivotTable(TableDestination:=summarized_table.Cells(2, summarized_LastCol + 3), TableName:="summarizedPivotTable")
+
+'Add Pivot Fields
+
+With summarized_pt
+
+'Coloumn area
+'.PivotFields("user name").Orientation = xlColumnField
+
+'Row area
+.PivotFields("Share Path Name").Orientation = xlRowField
+'.PivotFields("Share Name").Orientation = xlRowField
+
+.PivotFields("Share Path Name").Position = 1
+'.PivotFields("Share Name").Position = 2
+
+'Values area
+.AddDataField .PivotFields("Date and Time"), _
+"Count of Events", _
+xlCount
+
+End With
+
+    
+End Sub
+
+
+
+Sub CreatePivot()
+
+'Creating Pivot Table
+Dim pt As PivotTable
+Dim PC As PivotCache
+Dim table As Worksheet
+Dim dataSheet As Worksheet
+Dim LastRow As Long
+Dim LastCol As Long
+Dim MyRange As Range
+
+
+Set dataSheet = Worksheets("F3 only")
+
+LastRow = dataSheet.Cells(dataSheet.Rows.Count, 1).End(xlUp).Row
+LastCol = dataSheet.Cells(1, dataSheet.Columns.Count).End(xlToLeft).Column
+
+Set MyRange = dataSheet.Cells(1, 1).Resize(LastRow, LastCol)
+
+Worksheets.Add After:=Worksheets("F3 only")
+
+ActiveSheet.Name = "pivotTable"
+
+Set table = Worksheets("pivotTable")
+
+Set PC = ActiveWorkbook.PivotCaches.Create(xlDatabase, SourceData:=MyRange)
+
+Set pt = PC.CreatePivotTable(TableDestination:=table.Cells(1, 1), TableName:="pivotTable")
+
+'Add Pivot Fields
+
+With pt
+
+'Coloumn area
+.PivotFields("user name").Orientation = xlColumnField
+
+'Row area
+.PivotFields("Share Path Name").Orientation = xlRowField
+.PivotFields("Share Name").Orientation = xlRowField
+
+.PivotFields("Share Path Name").Position = 1
+.PivotFields("Share Name").Position = 2
+
+'Values area
+.AddDataField .PivotFields("Date and Time"), _
+"Count of Events", _
+xlCount
+
+End With
+
+End Sub
+
+
+
+
+Sub getTotalValues()
+
+'Dim ws As Worksheet
+Dim pt As PivotTable
+Dim j As Range
+Dim filesGT As String
+Dim filesname As String
+'Dim rsult As Variant
+'Dim fieldName As String, itemName As String, dataField As String
+
+Set ws = ThisWorkbook.Sheets("F3 only")
+Set pt = Worksheets("pivotTable").PivotTables("pivotTable")
+
+
+
+GrandTotalCol = pt.TableRange1.Columns(pt.TableRange1.Columns.Count).Column
+
+For Each j In Range(Columns(GrandTotalCol))
+
+    If j.Font.Bold Is True Then
+        filesGT = Cells(j).Value
+        filesname = Cells(Row(j), A)
+        
+        
+
+
+
+'MsgBox pt.Name
+
+End Sub
+
+
+Sub TestPT()
+
+    Dim pt As PivotTable
+
+    Set pt = Worksheets("pivotTable").PivotTables("pivotTable")
+
+    Debug.Print pt.TableRange2.Address
+
+End Sub
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
